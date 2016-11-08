@@ -1,0 +1,37 @@
+---
+
+- name: create install root dir
+  file: path={{install_path}} state=directory
+
+- name: Download opendj
+    get_url: 
+      url: {{opendj_url}} 
+      dest: {{download_dir}}
+      when:  install_method == {{url}}
+ 
+- name: Copy archive from local filesystem
+  copy: 
+    src: {{install_file}}
+    dest: {{download_dir}}
+    owner: {{opendj_user}} 
+    group: {{opendj_group}}
+    when: install_method == {{file}}
+
+- name: Unpack opendj archive
+  unarchive:
+    src: {{download_dir}}/{{opendj_zip}}
+    dest: {{install_path}}
+    when: install_method == {{url}} || {{file}}
+
+- name: ensure java requirement is installed
+  package:
+    name: {{ item }}
+    state: installed
+    with_items: 
+      - jre
+
+- name: install opendj from a repository
+  package:
+    name: opendj
+    state: latest
+    when: install_method == {{pkg}} 

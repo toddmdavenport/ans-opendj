@@ -1,27 +1,37 @@
 
 # Default Variables
-# Override these to suit your environment
 
 install_root: /opt
-download_dir: /var/tmp
-# ForgeRock user. The account that will own the files. OpenDJ will be started by root so that 
-# it can open port 389. This user could be different though.
-fr_user: root
-# Where we can grab nightly builds
-jenkins_url: "https://builds.forgerock.org/view/OpenDJ/job/OpenDJ%20-%20trunk%20-%20nightly/lastSuccessfulBuild/artifact/build/package"
-opendj_major: "OpenDJ-2.7.0"
-opendj_zip: "{{opendj_major}}-{{ansible_date_time.year}}{{ansible_date_time.month}}{{ansible_date_time.day}}.zip"
-opendj_url: "{{jenkins_url}}/{{opendj_zip}}"
+install_dir: /opendj
+install_path: {{install_root}}{{install_dir}}
+download_dir: /tmp
 
-# Directory Manager password
+base_uri: "http://download.forgerock.org/downloads/opendj/nightly/opendj-4.0.0-20161107.zip"
+opendj_version: "opendj-4.0.0"
+resource_path: "{{opendj_version}}-{{ansible_date_time.year}}{{ansible_date_time.month}}{{ansible_date_time.day}}.zip"
+opendj_url: "{{base_url}}/{{resource_path}}"
+
 opendj_password: password
-# BaseDN
 opendj_basedn: "dc=example,dc=com"
+root_user_dn: "cn=Directory Manager"
 
 opendj_ldap_port: 389
 opendj_ldaps_port: 636
 opendj_admin_port: 4444
 opendj_jmx_port: 1689
 
-# Name given to the init.d service file. 
+opendj_user: opendj
+opendj_group: opendj
 opendj_service_name: opendj
+opendj_create_am_suffix: false
+# must be one of: 'file', 'url' or 'pkg'
+# file copies a zip archive from the local filesysem
+# url will fetch a file from a remote url. Defaults to the Forgerock nightly build. 
+# pkg will install the package from the target system's package repository 
+install_method: file
+install_file: null
+
+hostname: "localhost.example.com"
+enerate_self_signed_certificate: true
+enable_start_tls: fase
+

@@ -1,0 +1,25 @@
+---
+
+- name: copy opendj props file
+  template: 
+    src: opendj.properties 
+    dest: /tmp/opendj.properties 
+  
+- name: setup opendj
+  command: {{install_path}}/setup --cli --propertiesFilePath /tmp/opendj.properties --acceptLicense --no-prompt
+    creates: {{install_path}}/config 
+
+- name: Create rc script
+  command: "{{install_path}}/bin/create-rc-script -f /etc/init.d/{{opendj_service_name}} -u root"
+  
+- name: Ensure files belong to {{opendj_user}}
+  file: path={{install_path}} state=directory owner={{opendj_user}} recurse=yes
+
+- name: Start opendj
+  service: name={{opendj_service_name}} state=started enabled=yes
+  
+- name: Create base suffix for openam config store. This makes it easier if we want to use OpenAM later
+  command: "{{install_root}}/opendj/bin/dsconfig set-backend-prop --backend-name userRoot --add base-dn:dc=openam,dc=forgerock,dc=org
+    --hostname localhost --port 4444 --bindDN cn=\"Directory\ Manager\" --bindPassword {{opendj_password}}
+    --trustAll --noPropertiesFile --no-prompt"
+  when: opendj_create_am_suffix
