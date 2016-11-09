@@ -6,7 +6,7 @@ install_dir: /opendj
 install_path: {{install_root}}{{install_dir}}
 download_dir: /tmp
 
-base_uri: "http://download.forgerock.org/downloads/opendj/nightly/opendj-4.0.0-20161107.zip"
+base_url: "http://download.forgerock.org/downloads/opendj/nightly/opendj-4.0.0-20161107.zip"
 opendj_version: "opendj-4.0.0"
 resource_path: "{{opendj_version}}-{{ansible_date_time.year}}{{ansible_date_time.month}}{{ansible_date_time.day}}.zip"
 opendj_url: "{{base_url}}/{{resource_path}}"
